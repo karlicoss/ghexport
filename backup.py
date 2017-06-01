@@ -1,10 +1,11 @@
+#!/usr/bin/env python3
+
 import datetime
+import json
+from sys import stdout
 
 from config import USER, TOKEN, DIR
 
-import json
-
-from atomicwrites import atomic_write
 
 from github import Github
 from github import GithubObject
@@ -36,10 +37,4 @@ ev = PaginatedList.PaginatedList(
 
 l = [e.attributes for e in ev]
 
-
-today = datetime.date.today()
-path = DIR.joinpath("events_" + today.strftime('%Y_%m_%d')).with_suffix('.json').as_posix()
-print("Backing up to " + path)
-
-with atomic_write(path, overwrite=True) as fo:
-    json.dump(l, fo, ensure_ascii=False, indent=4)
+json.dump(l, stdout, ensure_ascii=False, indent=4, sort_keys=True)
