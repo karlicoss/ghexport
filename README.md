@@ -2,7 +2,7 @@ Script for backing up your Github events stream.
 
 Prerequisites:
     
-    pip3 install atomicwrites PyGithub
+    `pip3 install -r requirements.txt`
 
 Usage:
 
