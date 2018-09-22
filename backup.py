@@ -4,7 +4,7 @@ import datetime
 import json
 from sys import stdout
 
-from config import USER, TOKEN, DIR
+from config import USER, TOKEN
 
 
 from github import Github

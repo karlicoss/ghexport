@@ -1,6 +1,3 @@
-from pathlib import Path
-
 # https://github.com/settings/tokens
 TOKEN = "<your github token goes here>"
 USER = "<your username>"
-DIR   = Path("<your_dir_goes_here>")
