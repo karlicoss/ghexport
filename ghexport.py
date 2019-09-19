@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
+import argparse
 import json
-import sys
 from typing import Dict, NamedTuple, List, Any
 
 from github import Github # type: ignore
@@ -41,12 +41,22 @@ class Exporter:
         return gd._asdict()
 
 
-from github_secrets import GITHUB_TOKEN_2 as login_or_token
+def get_json(**params):
+    return Exporter(**params).export_json()
 
 
 def main():
-    e = Exporter(login_or_token=login_or_token)
-    json.dump(e.export_json(), sys.stdout, ensure_ascii=False, indent=1)
+    from export_helper import setup_parser
+    parser = argparse.ArgumentParser("Exporter for you Github data")
+    setup_parser(parser=parser, params=['login_or_token'])
+    args = parser.parse_args()
+
+    params = args.params
+    dumper = args.dumper
+
+    j = get_json(**params)
+    js = json.dumps(j, ensure_ascii=False, indent=1)
+    dumper(js)
 
 
 if __name__ == '__main__':
