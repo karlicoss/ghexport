@@ -1,40 +1,53 @@
 #!/usr/bin/env python3
-
-import datetime
 import json
-from sys import stdout
+import sys
+from typing import Dict, NamedTuple, List, Any
 
-from config import USER, TOKEN
+from github import Github # type: ignore
 
-
-from github import Github
-from github import GithubObject
-from github import NamedUser
-from github import PaginatedList
+Json = Dict[str, Any]
 
 
-class JsonDummy(GithubObject.NonCompletableGithubObject):
-    def __repr__(self):
-        return self.get__repr__(self.attributes)
+class GithubData(NamedTuple):
+    profile: Json
 
-    def _initAttributes(self):
-        self.attributes = GithubObject.NotSet
+    events: List[Json]
+    followers: List[Json]
+    following: List[Json]
+    # TODO keys? not sure if worth keeping?
+    orgs: List[Json]
+    received_events: List[Json]
+    repos: List[Json]
+    starred: List[Json]
+    subscriptions: List[Json]
+    watched: List[Json]
 
-    def _useAttributes(self, attributes):
-        self.attributes = attributes
+
+class Exporter:
+    def __init__(self, *args, **kwargs) -> None:
+        self.api = Github(*args, **kwargs)
+
+    def export_json(self) -> Json:
+        login = self.api.get_user().login
+        user = self.api.get_user(login) # need to get NamedUser first
+
+        fields = list(GithubData._fields)
+        fields.remove('profile')
+
+        gd = GithubData(
+            profile=user._rawData,
+            **{f: [x._rawData for x in getattr(user, 'get_' + f)()] for f in fields},
+        )
+        return gd._asdict()
 
 
-api = Github(login_or_token=TOKEN)
-user = api.get_user(USER)  # type: NamedUser
+from github_secrets import GITHUB_TOKEN_2 as login_or_token
 
-# ev = user.get_events()
-ev = PaginatedList.PaginatedList(
-    JsonDummy,
-    user._requester,
-    user.url + "/events",
-    None
-)
 
-l = [e.attributes for e in ev]
+def main():
+    e = Exporter(login_or_token=login_or_token)
+    json.dump(e.export_json(), sys.stdout, ensure_ascii=False, indent=1)
 
-json.dump(l, stdout, ensure_ascii=False, indent=4, sort_keys=True)
+
+if __name__ == '__main__':
+    main()
