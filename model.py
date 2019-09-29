@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from functools import lru_cache
 from pathlib import Path
-from typing import NamedTuple, Sequence, Any, Iterator, Dict
+from typing import NamedTuple, Sequence, Any, Iterator, Dict, Union
 from glob import glob
 import json
 import logging
@@ -14,6 +14,7 @@ def get_logger():
     return logging.getLogger('ghexport')
 
 
+PathIsh = Union[str, Path]
 Json = Dict[str, Any]
 
 
@@ -21,10 +22,11 @@ class Model:
     """
     Github only seems to give away last 300 events via the API, so we need to merge them
     """
-    def __init__(self, sources: Sequence[Path]):
+    def __init__(self, sources: Sequence[PathIsh]) -> None:
         # TODO rely on external sort?
-        self.sources = list(sources)
+        self.sources = list(map(Path, sources))
 
+    # TODO rename to iter_?
     def events(self) -> Iterator[Json]:
         logger = get_logger()
 
