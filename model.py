@@ -58,27 +58,3 @@ class Model:
             # TODO merging by id could be sort of generic
 
 
-# def main():
-#     logger = get_logger()
-#     setup_logzero(logger, level=logging.DEBUG)
-#     import argparse
-#     p = argparse.ArgumentParser()
-#     p.add_argument('--source', type=str, required=True)
-#     p.add_argument('--no-glob', action='store_true')
-#     args = p.parse_args()
-# 
-#     if '*' in args.source and not args.no_glob:
-#         sources = glob(args.source)
-#     else:
-#         sources = [args.source]
-# 
-#     src = Path(max(sources))
-# 
-#     logger.debug('using %s', src)
-#     model = Model([src])
-# 
-# 
-# 
-# 
-# if __name__ == '__main__':
-#     main()
