@@ -51,28 +51,22 @@ I *highly* recommend checking exported files at least once just to make sure the
     
 :end:
 
-* TODO API limitations
+* API limitations
 
-*WARNING*: reddit API [[https://www.reddit.com/r/redditdev/comments/61z088/sample_more_than_1000_submissions_within_subreddit][limits your queries to 1000 entries]].
+*WARNING*: github API limits extent to which you can retrieve certain data, e.g. [[https://developer.github.com/v3/activity/events][events]] you can only get events from the past 90 days, and not more than 300 events.
 
-I *highly* recommend to back up regularly and keep old exports. Easy way to achieve it is command like this: 
+I *highly* recommend to export regularly and keep old exports. Easy way to achieve it is command like this: 
 
 : ./export.py --secrets /path/to/secrets.py >"export-$(date -I).json"
 
 Or, you can use [[https://github.com/karlicoss/arctee][arctee]] that automates this.
 
-# TODO link to exports post?
-# TODO link how DAL part can merge them together
 
-Check out these links if you're interested in getting older data that's inaccessible by API:
+To get your older data past 90 days, you can request a [[https://github.com/settings/admin][manual export]] in your account settings.
 
-- [[https://www.reddit.com/r/DataHoarder/comments/d0hjs7/reddit_takeout_export_your_account_data_as_json/ezbbcxe][comment]] by /u/binkarus
-- [[https://www.reddit.com/r/ideasfortheadmins/wiki/faq#wiki_can_we_have_a_way_to_download_our_entire_history_even_though_reddit_cuts_off_at_a_certain_point.3F][Reddit admis]] say that the rationale behind the API limitation is performance and caching
-- perhaps you can request all of your data under [[https://www.reddit.com/r/DataHoarder/comments/d0hjs7/reddit_takeout_export_your_account_data_as_json/eza0nsx][GDPR]]? I haven't tried that personally though.
-- [[https://pushshift.io][pushshift]] can potentially help you retrieve old data
+# TODO hmm, mention that dal.py can handle this?
 
-  
-* TODO Using data
+* Using data
   
 #+begin_src python :results drawer :exports results 
 import dal_helper; return dal_helper.make_parser().epilog
@@ -96,12 +90,15 @@ I elaborate on motivation behind it [[https://beepb00p.xyz/exports.html#dal][her
 
 Example output:
 
-: Your most saved subreddits:
-: [('orgmode', 50),
-:  ('emacs', 36),
-:  ('QuantifiedSelf', 33),
-:  ('AskReddit', 33),
-:  ('selfhosted', 29)]
-
+: Your events:
+: Counter({'PushEvent': 181,
+:          'WatchEvent': 27,
+:          'CreateEvent': 22,
+:          'IssueCommentEvent': 20,
+:          'PullRequestEvent': 15,
+:          'IssuesEvent': 5,
+:          'DeleteEvent': 5,
+:          'ForkEvent': 3,
+:          'PullRequestReviewCommentEvent': 1})
 
 
