@@ -1,24 +1,25 @@
 #!/usr/bin/env python3
-from functools import lru_cache
-from pathlib import Path
-from typing import NamedTuple, Sequence, Any, Iterator, Dict, Union
-from glob import glob
 import json
-import logging
-
-from kython import setup_logzero
+from pathlib import Path
+from typing import Iterator, Sequence, Dict
 
 import pytz
 
-def get_logger():
-    return logging.getLogger('ghexport')
+
+if __name__ == '__main__':
+    # see dal_helper.setup for the explanation
+    import dal_helper # type: ignore[import]
+    dal_helper.fix_imports(globals())
+
+from . import dal_helper  # type: ignore[no-redef]
+from .dal_helper import PathIsh, Json
 
 
-PathIsh = Union[str, Path]
-Json = Dict[str, Any]
+logger = dal_helper.logger('ghexport')
 
 
-class Model:
+# TODO move DAL bits from mypkg?
+class DAL:
     """
     Github only seems to give away last 300 events via the API, so we need to merge them
     """
@@ -26,10 +27,7 @@ class Model:
         # TODO rely on external sort?
         self.sources = list(map(Path, sources))
 
-    # TODO rename to iter_?
     def events(self) -> Iterator[Json]:
-        logger = get_logger()
-
         emitted: Dict[str, Json] = {}
         for src in self.sources:
             jj = json.loads(src.read_text())
@@ -58,3 +56,15 @@ class Model:
             # TODO merging by id could be sort of generic
 
 
+def demo(dal: DAL):
+    # TODO
+    print("Your events:")
+    from collections import Counter
+    c = Counter(e['type'] for e in dal.events())
+    from pprint import pprint
+    pprint(c)
+
+
+if __name__ == '__main__':
+    import dal_helper
+    dal_helper.main(DAL=DAL, demo=demo)
