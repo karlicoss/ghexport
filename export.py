@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 import argparse
 import json
-from typing import Dict, NamedTuple, List, Any
+from typing import NamedTuple, List, Any
 
 from github import Github # type: ignore
 
-Json = Dict[str, Any]
+
+from export_helper import Json
 
 
 class GithubData(NamedTuple):
@@ -25,6 +26,8 @@ class GithubData(NamedTuple):
 
 class Exporter:
     def __init__(self, *args, **kwargs) -> None:
+        kwargs['login_or_token'] = kwargs['token']
+        del kwargs['token']
         self.api = Github(*args, **kwargs)
 
     def export_json(self) -> Json:
@@ -46,9 +49,7 @@ def get_json(**params):
 
 
 def main():
-    from export_helper import setup_parser
-    parser = argparse.ArgumentParser("Exporter for you Github data")
-    setup_parser(parser=parser, params=['login_or_token'])
+    parser = make_parser()
     args = parser.parse_args()
 
     params = args.params
@@ -57,6 +58,25 @@ def main():
     j = get_json(**params)
     js = json.dumps(j, ensure_ascii=False, indent=1)
     dumper(js)
+
+
+def make_parser():
+    from export_helper import setup_parser, Parser
+    parser = Parser('''
+Export your Github personal data: issues, PRs, comments, followers and followings, etc.
+
+*Note*: this only deals with metadata. If you want a download of actual git repositories, I recommend using [[https://github.com/josegonzalez/python-github-backup][python-github-backup]].
+'''.strip())
+    # TODO repositories?
+    setup_parser(
+        parser=parser,
+        params=['token'],
+        extra_usage='''
+You can also import ~export.py~ as a module and call ~get_json~ function directly to get raw JSON.
+        ''',
+    )
+    return parser
+
 
 
 if __name__ == '__main__':
