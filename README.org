@@ -1,0 +1,107 @@
+#+begin_src python :results drawer :exports results
+import export
+return export.make_parser().prog
+#+end_src
+
+#+RESULTS:
+:results:
+Export your Github personal data: issues, PRs, comments, followers and followings, etc.
+
+*Note*: this only deals with metadata. If you want a download of actual git repositories, I recommend using [[https://github.com/josegonzalez/python-github-backup][python-github-backup]].
+:end:
+
+* Setting up
+1. =pip3 install --user -r requirements.txt=
+2. To use the API, you need to register a [[https://github.com/settings/tokens][get a =token=]] from settings.
+ 
+* Exporting
+
+#+begin_src python :results drawer :exports results 
+import export; return export.make_parser().epilog
+#+end_src
+
+#+RESULTS:
+:results:
+
+Usage:
+
+*Recommended*: create =secrets.py= keeping your api parameters, e.g.:
+
+
+: token = "TOKEN"
+
+
+After that, use:
+
+: ./export.py --secrets /path/to/secrets.py
+
+That way you type less and have control over where you keep your plaintext secrets.
+
+*Alternatively*, you can pass parameters directly, e.g.
+
+: ./export.py --token <token>
+
+However, this is verbose and prone to leaking your keys/tokens/passwords in shell history.
+
+    
+You can also import ~export.py~ as a module and call ~get_json~ function directly to get raw JSON.
+        
+
+I *highly* recommend checking exported files at least once just to make sure they contain everything you expect from your export. If not, please feel free to ask or raise an issue!
+    
+:end:
+
+* TODO API limitations
+
+*WARNING*: reddit API [[https://www.reddit.com/r/redditdev/comments/61z088/sample_more_than_1000_submissions_within_subreddit][limits your queries to 1000 entries]].
+
+I *highly* recommend to back up regularly and keep old exports. Easy way to achieve it is command like this: 
+
+: ./export.py --secrets /path/to/secrets.py >"export-$(date -I).json"
+
+Or, you can use [[https://github.com/karlicoss/arctee][arctee]] that automates this.
+
+# TODO link to exports post?
+# TODO link how DAL part can merge them together
+
+Check out these links if you're interested in getting older data that's inaccessible by API:
+
+- [[https://www.reddit.com/r/DataHoarder/comments/d0hjs7/reddit_takeout_export_your_account_data_as_json/ezbbcxe][comment]] by /u/binkarus
+- [[https://www.reddit.com/r/ideasfortheadmins/wiki/faq#wiki_can_we_have_a_way_to_download_our_entire_history_even_though_reddit_cuts_off_at_a_certain_point.3F][Reddit admis]] say that the rationale behind the API limitation is performance and caching
+- perhaps you can request all of your data under [[https://www.reddit.com/r/DataHoarder/comments/d0hjs7/reddit_takeout_export_your_account_data_as_json/eza0nsx][GDPR]]? I haven't tried that personally though.
+- [[https://pushshift.io][pushshift]] can potentially help you retrieve old data
+
+  
+* TODO Using data
+  
+#+begin_src python :results drawer :exports results 
+import dal_helper; return dal_helper.make_parser().epilog
+#+end_src
+
+#+RESULTS:
+:results:
+
+You can use =dal.py= (stands for "Data Access/Abstraction Layer") to access your exported data, even offline.
+I elaborate on motivation behind it [[https://beepb00p.xyz/exports.html#dal][here]].
+
+- main usecase is to be imported as python module to allow for *programmatic access* to your data.
+
+  You can find some inspiration in [[https://beepb00p.xyz/mypkg.html][=my.=]] package that I'm using as an API to all my personal data.
+
+- to test it against your export, simply run: ~./dal.py --source /path/to/export~
+
+- you can also try it interactively: ~./dal.py --source /path/to/export --interactive~
+
+:end:
+
+Example output:
+
+: Your most saved subreddits:
+: [('orgmode', 50),
+:  ('emacs', 36),
+:  ('QuantifiedSelf', 33),
+:  ('AskReddit', 33),
+:  ('selfhosted', 29)]
+
+
+
