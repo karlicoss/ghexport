@@ -25,7 +25,8 @@ class DAL:
     """
     def __init__(self, sources: Sequence[PathIsh]) -> None:
         # TODO rely on external sort?
-        self.sources = list(map(Path, sources))
+        pathify = lambda s: s if isinstance(s, Path) else Path(s)
+        self.sources = list(map(pathify, sources))
 
     def events(self) -> Iterator[Json]:
         emitted: Dict[str, Json] = {}
