@@ -41,6 +41,26 @@ class Exporter:
             profile=user._rawData,
             **{f: [x._rawData for x in getattr(user, 'get_' + f)()] for f in fields},
         )
+
+        ##  get traffic (it's only kept for 14 days :( )
+        for r in gd.repos:
+            # todo not ideal that we retrieve it all over again..
+            repo = self.api.get_repo(r['full_name'])
+
+            fields = ['views', 'clones', 'popular/referrers', 'popular/paths']
+            # todo ugh. this vvv doesn't quite work because returned types are different (lists vs github. objects)
+            # [x._rawData for x in getattr(repo, 'get_' + f)()]
+            # ad github library doesn't expose raw api properly...
+            traffic = {
+                f: repo._requester.requestJsonAndCheck('GET', repo.url + '/traffic/' + f)[1]
+                for f in fields
+            }
+
+            assert 'traffic' not in r # just in case..
+            r['traffic'] = traffic
+            # TODO not sure if this is a good way to keep it...
+        ##
+
         return gd._asdict()
 
 
