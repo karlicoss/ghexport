@@ -1,6 +1,6 @@
-#+begin_src python :results drawer :exports results
-import export
-return export.make_parser().prog
+#+begin_src python :dir src :results drawer :exports results
+import ghexport.export as E
+return E.make_parser().prog
 #+end_src
 
 #+RESULTS:
@@ -11,13 +11,17 @@ Export your Github personal data: issues, PRs, comments, followers and following
 :end:
 
 * Setting up
-1. =pip3 install --user -r requirements.txt=
-2. To use the API, you need to register a [[https://github.com/settings/tokens][get a =token=]] from settings.
+1. The easiest way to setup is =pip3 install --user git+https://github.com/karlicoss/ghexport=.
+
+   Alternatively, you can =git clone --recursive= and/or =pip3 install --editable=
+2. To use the API, you need to get yourself a [[https://github.com/settings/tokens][personal access token]] from settings. Note that you need to use =repo= scope.
+
  
 * Exporting
 
-#+begin_src python :results drawer :exports results 
-import export; return export.make_parser().epilog
+#+begin_src python :dir src :results drawer :exports results
+import ghexport.export as E
+return E.make_parser().epilog
 #+end_src
 
 #+RESULTS:
@@ -43,12 +47,12 @@ That way you type less and have control over where you keep your plaintext secre
 
 However, this is verbose and prone to leaking your keys/tokens/passwords in shell history.
 
-    
+
 You can also import ~export.py~ as a module and call ~get_json~ function directly to get raw JSON.
-        
+
 
 I *highly* recommend checking exported files at least once just to make sure they contain everything you expect from your export. If not, please feel free to ask or raise an issue!
-    
+
 :end:
 
 * API limitations
@@ -66,10 +70,10 @@ To get your older data past 90 days, you can request a [[https://github.com/sett
 
 # TODO hmm, mention that dal.py can handle this?
 
-* Using data
+* Using the data
   
-#+begin_src python :results drawer :exports results 
-import dal_helper; return dal_helper.make_parser().epilog
+#+begin_src python :dir src  :results drawer :exports results
+import ghexport.exporthelpers.dal_helper as D; return D.make_parser().epilog
 #+end_src
 
 #+RESULTS:

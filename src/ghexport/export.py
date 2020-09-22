@@ -3,10 +3,10 @@ import argparse
 import json
 from typing import NamedTuple, List, Any
 
-from github import Github # type: ignore
+from github import Github
 
 
-from export_helper import Json
+from .exporthelpers.export_helper import Json
 
 
 class GithubData(NamedTuple):
@@ -38,7 +38,7 @@ class Exporter:
         fields.remove('profile')
 
         gd = GithubData(
-            profile=user._rawData,
+            profile=user._rawData, # type: ignore[attr-defined]
             **{f: [x._rawData for x in getattr(user, 'get_' + f)()] for f in fields},
         )
 
@@ -52,7 +52,7 @@ class Exporter:
             # [x._rawData for x in getattr(repo, 'get_' + f)()]
             # ad github library doesn't expose raw api properly...
             traffic = {
-                f: repo._requester.requestJsonAndCheck('GET', repo.url + '/traffic/' + f)[1]
+                f: repo._requester.requestJsonAndCheck('GET', repo.url + '/traffic/' + f)[1] # type: ignore[attr-defined]
                 for f in fields
             }
 
@@ -81,7 +81,7 @@ def main():
 
 
 def make_parser():
-    from export_helper import setup_parser, Parser
+    from .exporthelpers.export_helper import setup_parser, Parser
     parser = Parser('''
 Export your Github personal data: issues, PRs, comments, followers and followings, etc.
 
