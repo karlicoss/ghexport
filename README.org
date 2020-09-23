@@ -1,6 +1,5 @@
 #+begin_src python :dir src :results drawer :exports results
-import ghexport.export as E
-return E.make_parser().prog
+import ghexport.export as E; return E.make_parser().prog
 #+end_src
 
 #+RESULTS:
@@ -11,17 +10,16 @@ Export your Github personal data: issues, PRs, comments, followers and following
 :end:
 
 * Setting up
-1. The easiest way to setup is =pip3 install --user git+https://github.com/karlicoss/ghexport=.
+1. The easiest way is =pip3 install --user git+https://github.com/karlicoss/ghexport=.
 
-   Alternatively, you can =git clone --recursive= and/or =pip3 install --editable=
-2. To use the API, you need to get yourself a [[https://github.com/settings/tokens][personal access token]] from settings. Note that you need to use =repo= scope.
+   Alternatively, use =git clone --recursive=, or =git pull && git submodules update --init=. After that, you can use =pip3 install --editable=.
+2. To use the API, you need to get a [[https://github.com/settings/tokens][personal access token]] from settings. Note that you need to use =repo= scope.
 
  
 * Exporting
 
 #+begin_src python :dir src :results drawer :exports results
-import ghexport.export as E
-return E.make_parser().epilog
+import ghexport.export as E; return E.make_parser().epilog
 #+end_src
 
 #+RESULTS:
@@ -37,18 +35,18 @@ Usage:
 
 After that, use:
 
-: ./export.py --secrets /path/to/secrets.py
+: python3 -m ghexport.export --secrets /path/to/secrets.py
 
 That way you type less and have control over where you keep your plaintext secrets.
 
 *Alternatively*, you can pass parameters directly, e.g.
 
-: ./export.py --token <token>
+: python3 -m ghexport.export --token <token>
 
 However, this is verbose and prone to leaking your keys/tokens/passwords in shell history.
 
 
-You can also import ~export.py~ as a module and call ~get_json~ function directly to get raw JSON.
+You can also import ~ghexport.export~ as a module and call ~get_json~ function directly to get raw JSON.
 
 
 I *highly* recommend checking exported files at least once just to make sure they contain everything you expect from your export. If not, please feel free to ask or raise an issue!
@@ -61,7 +59,7 @@ I *highly* recommend checking exported files at least once just to make sure the
 
 I *highly* recommend to export regularly and keep old exports. Easy way to achieve it is command like this: 
 
-: ./export.py --secrets /path/to/secrets.py >"export-$(date -I).json"
+: python3 -m ghexport.export --secrets /path/to/secrets.py >"export-$(date -I).json"
 
 Or, you can use [[https://github.com/karlicoss/arctee][arctee]] that automates this.
 
@@ -79,16 +77,16 @@ import ghexport.exporthelpers.dal_helper as D; return D.make_parser().epilog
 #+RESULTS:
 :results:
 
-You can use =dal.py= (stands for "Data Access/Abstraction Layer") to access your exported data, even offline.
+You can use =ghexport.dal= (stands for "Data Access/Abstraction Layer") to access your exported data, even offline.
 I elaborate on motivation behind it [[https://beepb00p.xyz/exports.html#dal][here]].
 
 - main usecase is to be imported as python module to allow for *programmatic access* to your data.
 
   You can find some inspiration in [[https://beepb00p.xyz/mypkg.html][=my.=]] package that I'm using as an API to all my personal data.
 
-- to test it against your export, simply run: ~./dal.py --source /path/to/export~
+- to test it against your export, simply run: ~python3 -m ghexport.dal --source /path/to/export~
 
-- you can also try it interactively: ~./dal.py --source /path/to/export --interactive~
+- you can also try it interactively: ~python3 -m ghexport.dal --source /path/to/export --interactive~
 
 :end:
 
