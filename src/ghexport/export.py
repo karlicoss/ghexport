@@ -92,7 +92,7 @@ Export your Github personal data: issues, PRs, comments, followers and following
         parser=parser,
         params=['token'],
         extra_usage='''
-You can also import ~export.py~ as a module and call ~get_json~ function directly to get raw JSON.
+You can also import ~ghexport.export~ as a module and call ~get_json~ function directly to get raw JSON.
         ''',
     )
     return parser

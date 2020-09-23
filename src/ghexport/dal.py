@@ -19,7 +19,6 @@ class DAL:
     Github only seems to give away last 300 events via the API, so we need to merge them
     """
     def __init__(self, sources: Sequence[PathIsh]) -> None:
-        # TODO rely on external sort?
         pathify = lambda s: s if isinstance(s, Path) else Path(s)
         self.sources = list(map(pathify, sources))
 
@@ -54,7 +53,6 @@ class DAL:
 
 
 def demo(dal: DAL):
-    # TODO
     print("Your events:")
     from collections import Counter
     c = Counter(e['type'] for e in dal.events())
