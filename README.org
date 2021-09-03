@@ -68,6 +68,10 @@ To get your older data past 90 days, you can request a [[https://github.com/sett
 
 # TODO hmm, mention that dal.py can handle this?
 
+* Known Issues
+
+The =requests= (and therefore =PyGithub=) modules on which this depends seems to sometimes fail to login if a =~.netrc= file is present, see [[https://github.com/psf/requests/issues/5801#issuecomment-901610012][here]] for context.
+
 * Using the data
   
 #+begin_src python :dir src  :results drawer :exports results
