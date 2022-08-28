@@ -23,6 +23,8 @@ class GithubData(NamedTuple):
     subscriptions: List[Json]
     watched: List[Json]
 
+_TRAFFIC = 'traffic'
+
 
 class Exporter:
     def __init__(self, *args, **kwargs) -> None:
@@ -47,6 +49,13 @@ class Exporter:
             # todo not ideal that we retrieve it all over again..
             repo = self.api.get_repo(r['full_name'])
 
+            if repo.archived:
+                # since approx. August 2022 it started failing with
+                # github.GithubException.GithubException: 403 {"message": "Must have push access to repository",
+                # 'Traffic' tab also isn't present in the web so I guess they just arent' keeping it anymore
+                r[_TRAFFIC] = None
+                continue
+
             fields = ['views', 'clones', 'popular/referrers', 'popular/paths']
             # todo ugh. this vvv doesn't quite work because returned types are different (lists vs github. objects)
             # [x._rawData for x in getattr(repo, 'get_' + f)()]
@@ -67,8 +76,8 @@ class Exporter:
                 raise ge
 
             traffic = {f: fetch(f) for f in fields}
-            assert 'traffic' not in r # just in case..
-            r['traffic'] = traffic
+            assert _TRAFFIC not in r # just in case..
+            r[_TRAFFIC] = traffic
             # TODO not sure if this is a good way to keep it...
         ##
 
