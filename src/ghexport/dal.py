@@ -21,7 +21,7 @@ class DAL:
     def events(self) -> Iterator[Json]:
         emitted: Dict[str, Json] = {}
         for src in self.sources:
-            with src.open('rb') as fo:
+            with src.open(mode='rb') as fo:
                 first = fo.read(1)
             old_format = first == b'['
             extractor = None if old_format else 'events'
