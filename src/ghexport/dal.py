@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
-import json
 from pathlib import Path
 from typing import Iterator, Sequence, Dict
 
-import pytz
-
-
 from .exporthelpers import dal_helper, logging_helper
-from .exporthelpers.dal_helper import PathIsh, Json
+from .exporthelpers.dal_helper import PathIsh, Json, pathify, json_items
 
 
 logger = logging_helper.logger('ghexport')
@@ -19,20 +15,20 @@ class DAL:
     Github only seems to give away last 300 events via the API, so we need to merge them
     """
     def __init__(self, sources: Sequence[PathIsh]) -> None:
-        pathify = lambda s: s if isinstance(s, Path) else Path(s)
         self.sources = list(map(pathify, sources))
 
     # todo error handling?
     def events(self) -> Iterator[Json]:
         emitted: Dict[str, Json] = {}
         for src in self.sources:
-            jj = json.loads(src.read_text())
-            # quick hack to adapt for both old & new formats
-            if 'events' in jj:
-                jj = jj['events']
+            with src.open('rb') as fo:
+                first = fo.read(1)
+            old_format = first == b'['
+            extractor = None if old_format else 'events'
+            jj = list(json_items(src, extractor))
 
             # by default they come in descending order
-            jj = list(sorted(jj, key=lambda e: e['id']))
+            jj = sorted(jj, key=lambda e: e['id'])
 
             before = len(emitted)
 
@@ -48,7 +44,8 @@ class DAL:
 
             after = len(emitted)
 
-            logger.info('%s: added %d out of %d events', src, (after - before), len(jj))
+            logger.debug('%s: added %d out of %d events', src, (after - before), len(jj))
+            # TODO how to configure logger via hpi?
             # TODO merging by id could be sort of generic
 
 
