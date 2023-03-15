@@ -12,7 +12,7 @@ Export your Github personal data: issues, PRs, comments, followers and following
 * Setting up
 1. The easiest way is =pip3 install --user git+https://github.com/karlicoss/ghexport=.
 
-   Alternatively, use =git clone --recursive=, or =git pull && git submodules update --init=. After that, you can use =pip3 install --editable=.
+   Alternatively, use =git clone --recursive=, or =git pull && git submodule update --init=. After that, you can use =pip3 install --editable=.
 2. To use the API, you need to get a [[https://github.com/settings/tokens][personal access token]] from settings. Note that you need to use =repo= scope.
 
  

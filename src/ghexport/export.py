@@ -40,7 +40,7 @@ class Exporter:
         fields.remove('profile')
 
         gd = GithubData(
-            profile=user._rawData, # type: ignore[attr-defined]
+            profile=user._rawData,  # type: ignore[union-attr]
             **{f: [x._rawData for x in getattr(user, 'get_' + f)()] for f in fields},
         )
 
