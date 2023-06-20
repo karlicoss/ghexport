@@ -12,6 +12,12 @@ DAL_DEPS = [
     'PyGithub',  # API
 ]
 
+OPTIONAL_DEPS = [
+    'orjson',  # for faster json processing
+    'colorlog',
+    'enlighten',
+]
+
 ALL_DEPS = sorted({*EXPORT_DEPS, *DAL_DEPS})
 
 
@@ -47,8 +53,8 @@ def main() -> None:
                 'pytest',
                 'mypy',
                 'lxml',  # lxml for mypy coverage report
-                'orjson',  # optional packages
             ],
+            'optional': OPTIONAL_DEPS,
         },
     )
 
