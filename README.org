@@ -53,6 +53,18 @@ I *highly* recommend checking exported files at least once just to make sure the
 
 :end:
 
+** Extra export options
+- you can control specific data you want to export via ~--include~ option (see ~--help~ for available fields)
+
+  By default, all data will be included in the export.
+
+- you can include or exclude [[https://docs.github.com/en/rest/metrics/traffic][repository traffic]] data via ~--include-repos-traffic~ or ~--exclude-repos-traffic~.
+
+  Currently it's included by default.
+
+  You might want to exclude it if you have some issues with traffic API endpoint (it tends to be flakier than other endpoints).
+
+
 * API limitations
 
 *WARNING*: github API limits extent to which you can retrieve certain data, e.g. [[https://developer.github.com/v3/activity/events][events]] you can only get events from the past 90 days, and not more than 300 events.
