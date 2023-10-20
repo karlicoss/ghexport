@@ -8,7 +8,7 @@ from .exporthelpers import dal_helper, logging_helper
 from .exporthelpers.dal_helper import PathIsh, Json, pathify, json_items
 
 
-logger = logging_helper.makeLogger(__name__)
+logger = logging_helper.make_logger(__name__)
 
 
 # todo move DAL bits from hpi?
