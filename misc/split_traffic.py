@@ -2,14 +2,15 @@
 """
 Usage: parallel -j8 '/path/to/split_traffic.py {}' ::: *.json.zst
 """
-import os
-from pathlib import Path
-import re
-import sys
-import subprocess
 
-import kompress
 import json
+import os
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+import kompress  # ty: ignore[unresolved-import]
 
 
 def main() -> None:
