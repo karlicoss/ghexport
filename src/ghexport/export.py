@@ -18,15 +18,12 @@ _ALL_FIELDS = [
     'followers',
     'following',
     'orgs',
-    # TODO not convinced it really works? returns empty results for me
-    # but seems like github projects are a bit of a mess
-    # there are some 'classic' ones and 'new' ones for which graphql is recommended?
-    'projects',
     'received_events',
     'repos',
     'starred',
     'subscriptions',
     'watched',
+    # NOTE: there are also projects, but they broke around 2025, and now requeres graphql to export?
 ]
 
 
