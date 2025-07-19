@@ -1,15 +1,15 @@
-#!/usr/bin/env python3
+from __future__ import annotations
+
 import argparse
 import json
-from typing import List, Optional
 import warnings
+from typing import Optional
 
 import github
 from github.Repository import Repository
+
 # github.enable_console_debug_logging()
-
-from .exporthelpers.export_helper import setup_parser, Json, Parser
-
+from .exporthelpers.export_helper import Json, Parser, setup_parser
 
 _ALL_FIELDS = [
     'profile',
@@ -38,7 +38,7 @@ class Exporter:
         self,
         *args,
         token: str,
-        include: Optional[List[str]] = None,
+        include: Optional[list[str]] = None,
         include_repos_traffic: Optional[bool] = None,
         **kwargs,
     ) -> None:
@@ -106,11 +106,11 @@ class Exporter:
         # and pygithub library doesn't expose raw api properly...
         def fetch(f: str) -> Json:
             path = repo.url + '/traffic/' + f
-            ge = None  # type: ignore
+            ge = None  # type: ignore[var-annotated]
             attempts = 5
             # NOTE: ugh. sometimes it just throws 500 on this endpoint for no reason, and then immediately after it works??
             # started happening around 20220305 :shrug:
-            for attempt in range(attempts):
+            for _attempt in range(attempts):
                 try:
                     return repo._requester.requestJsonAndCheck('GET', path)[1]
                 except github.GithubException as ge:
@@ -124,7 +124,7 @@ class Exporter:
 
 
 def get_json(**kwargs) -> Json:
-    return Exporter(**kwargs).export_json()
+    return Exporter(**kwargs).export_json()  # ty: ignore[missing-argument]
 
 
 def main() -> None:
@@ -144,11 +144,13 @@ def main() -> None:
 
 
 def make_parser() -> argparse.ArgumentParser:
-    parser = Parser('''
+    parser = Parser(
+        '''
 Export your Github personal data: issues, PRs, comments, followers and followings, etc.
 
 *Note*: this only deals with metadata. If you want a download of actual git repositories, I recommend using [[https://github.com/josegonzalez/python-github-backup][python-github-backup]].
-'''.strip())
+'''.strip()
+    )
     # TODO repositories?
     setup_parser(
         parser=parser,

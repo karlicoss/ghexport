@@ -1,12 +1,10 @@
-#!/usr/bin/env python3
 from __future__ import annotations
 
+from collections.abc import Iterator, Sequence
 from pathlib import Path
-from typing import Iterator, Sequence, Dict
 
 from .exporthelpers import dal_helper, logging_helper
-from .exporthelpers.dal_helper import PathIsh, Json, pathify, json_items
-
+from .exporthelpers.dal_helper import Json, PathIsh, json_items, pathify
 
 logger = logging_helper.make_logger(__name__)
 
@@ -36,7 +34,7 @@ class DAL:
 
     # todo error handling?
     def events(self) -> Iterator[Json]:
-        emitted: Dict[str, Json] = {}
+        emitted: dict[str, Json] = {}
         # todo maybe info level should be a bit smarter? e.g. log that we're processing every few seconds or something, at least in interactive mode?
         for src in self._sources():
             with src.open(mode='rb') as fo:
