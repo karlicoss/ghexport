@@ -3,7 +3,6 @@ from __future__ import annotations
 import argparse
 import json
 import warnings
-from typing import Optional
 
 import github
 from github.Repository import Repository
@@ -35,8 +34,8 @@ class Exporter:
         self,
         *args,
         token: str,
-        include: Optional[list[str]] = None,
-        include_repos_traffic: Optional[bool] = None,
+        include: list[str] | None = None,
+        include_repos_traffic: bool | None = None,
         **kwargs,
     ) -> None:
         kwargs['login_or_token'] = token
@@ -65,7 +64,10 @@ class Exporter:
                 continue
             field = method[len('get_') :]
             if field not in _ALL_FIELDS:
-                warnings.warn(f"'{field}' data isn't handled -- please report this https://github.com/karlicoss/ghexport/issues")
+                warnings.warn(
+                    f"'{field}' data isn't handled -- please report this https://github.com/karlicoss/ghexport/issues",
+                    stacklevel=2,
+                )
         ##
 
         json_data = {}
@@ -80,7 +82,7 @@ class Exporter:
                 res = [o._rawData for o in objects]
                 if f == 'repos' and self.include_repos_traffic:
                     # populate repo with traffic data
-                    for repo, jr in zip(objects, res):
+                    for repo, jr in zip(objects, res, strict=True):
                         assert _TRAFFIC not in jr, jr  # just in case..
                         # TODO not sure if this is a good way to keep it...
                         jr[_TRAFFIC] = self._fetch_traffic(repo=repo)
@@ -88,7 +90,7 @@ class Exporter:
 
         return json_data
 
-    def _fetch_traffic(self, *, repo: Repository) -> Optional[Json]:
+    def _fetch_traffic(self, *, repo: Repository) -> Json | None:
         ##  get traffic (it's only kept for 14 days :( )
         if repo.archived:
             # since approx. August 2022 it started failing with
@@ -156,7 +158,12 @@ Export your Github personal data: issues, PRs, comments, followers and following
 You can also import ~ghexport.export~ as a module and call ~get_json~ function directly to get raw JSON.
         ''',
     )
-    parser.add_argument('--include', nargs='+', choices=_ALL_FIELDS, help='Only include specific export fields (exports all by default).')
+    parser.add_argument(
+        '--include',
+        nargs='+',
+        choices=_ALL_FIELDS,
+        help='Only include specific export fields (exports all by default).',
+    )
 
     tgroup = parser.add_mutually_exclusive_group()
     tgroup.add_argument('--include-repos-traffic', dest='include_repos_traffic', action='store_true')

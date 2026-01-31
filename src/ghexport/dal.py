@@ -4,7 +4,7 @@ from collections.abc import Iterator, Sequence
 from pathlib import Path
 
 from .exporthelpers import dal_helper, logging_helper
-from .exporthelpers.dal_helper import Json, PathIsh, json_items, pathify
+from .exporthelpers.dal_helper import Json, json_items, pathify
 
 logger = logging_helper.make_logger(__name__)
 
@@ -15,7 +15,7 @@ class DAL:
     Github only seems to give away last 300 events via the API, so we need to merge them
     """
 
-    def __init__(self, sources: Sequence[PathIsh]) -> None:
+    def __init__(self, sources: Sequence[Path | str]) -> None:
         self.sources = list(map(pathify, sources))
 
     def _sources(self) -> Iterator[Path]:
@@ -50,7 +50,7 @@ class DAL:
 
             for e in jj:
                 eid = e['id']
-                prev = emitted.get(eid, None)
+                prev = emitted.get(eid)
                 if prev is None:
                     emitted[eid] = e
                     yield e
