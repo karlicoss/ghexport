@@ -19,7 +19,7 @@ Homepage = "https://github.com/karlicoss/ghexport"
 
 
 [project.optional-dependencies]
-dal = []
+dal = ["more-itertools"]
 export = ["PyGithub"]
 optional = [
     "orjson",  # faster json processing
