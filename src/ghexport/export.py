@@ -8,7 +8,7 @@ import github
 from github.Repository import Repository
 
 # github.enable_console_debug_logging()
-from .exporthelpers.export_helper import Json, Parser, setup_parser
+from .exporthelpers.export_helper import Json, Parser
 
 _ALL_FIELDS = [
     'profile',
@@ -148,16 +148,13 @@ def make_parser() -> argparse.ArgumentParser:
 Export your Github personal data: issues, PRs, comments, followers and followings, etc.
 
 *Note*: this only deals with metadata. If you want a download of actual git repositories, I recommend using [[https://github.com/josegonzalez/python-github-backup][python-github-backup]].
-'''.strip()
-    )
-    # TODO repositories?
-    setup_parser(
-        parser=parser,
+'''.strip(),
         params=['token'],
         extra_usage='''
 You can also import ~ghexport.export~ as a module and call ~get_json~ function directly to get raw JSON.
         ''',
     )
+    # TODO repositories?
     parser.add_argument(
         '--include',
         nargs='+',

@@ -26,6 +26,7 @@ optional = [
     "colorlog",
     "ijson",  # faster iterative json processing
 ]
+
 [dependency-groups]
 # TODO: not sure, on the one hand could just use 'standard' dev dependency group
 # On the other hand, it's a bit annoying that it's always included by default? 
@@ -39,7 +40,7 @@ testing = [
 typecheck = [
     "mypy",
     "lxml", # for mypy html coverage
-    "ty>=0.0.14",
+    "ty>=0.0.39",
 
     { include-group = "testing" },
 ]
