@@ -123,7 +123,7 @@ class Exporter:
 
 
 def get_json(**kwargs) -> Json:
-    return Exporter(**kwargs).export_json()  # ty: ignore[missing-argument]
+    return Exporter(**kwargs).export_json()
 
 
 def main() -> None:
@@ -147,12 +147,13 @@ def make_parser() -> argparse.ArgumentParser:
         '''
 Export your Github personal data: issues, PRs, comments, followers and followings, etc.
 
-*Note*: this only deals with metadata. If you want a download of actual git repositories, I recommend using [[https://github.com/josegonzalez/python-github-backup][python-github-backup]].
+**Note**: this only deals with metadata.
+If you want a download of actual git repositories, I recommend using [python-github-backup](https://github.com/josegonzalez/python-github-backup).
 '''.strip(),
         params=['token'],
         extra_usage='''
-You can also import ~ghexport.export~ as a module and call ~get_json~ function directly to get raw JSON.
-        ''',
+You can also import `ghexport.export` as a module and call `get_json` function directly to get raw JSON.
+'''.lstrip(),
     )
     # TODO repositories?
     parser.add_argument(
