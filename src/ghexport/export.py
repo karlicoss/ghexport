@@ -5,6 +5,7 @@ import json
 import warnings
 
 import github
+from github.GithubException import BadCredentialsException
 from github.Repository import Repository
 
 # github.enable_console_debug_logging()
@@ -105,18 +106,22 @@ class Exporter:
         # and pygithub library doesn't expose raw api properly...
         def fetch(f: str) -> Json:
             path = repo.url + '/traffic/' + f
-            ge = None  # type: ignore[var-annotated]
+            last_server_error = None
             attempts = 5
             # NOTE: ugh. sometimes it just throws 500 on this endpoint for no reason, and then immediately after it works??
             # started happening around 20220305 :shrug:
             for _attempt in range(attempts):
                 try:
                     return repo._requester.requestJsonAndCheck('GET', path)[1]
-                except github.GithubException as ge:
-                    if ge.status != 500:
-                        raise ge
-            assert ge is not None
-            raise ge
+                except BadCredentialsException:
+                    # GitHub occasionally returns a transient bogus 401.
+                    return repo._requester.requestJsonAndCheck('GET', path)[1]
+                except github.GithubException as error:
+                    if error.status != 500:
+                        raise
+                    last_server_error = error
+            assert last_server_error is not None
+            raise last_server_error
 
         traffic = {f: fetch(f) for f in traffic_fields}
         return traffic
