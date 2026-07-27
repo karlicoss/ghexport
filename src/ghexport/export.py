@@ -22,7 +22,6 @@ _ALL_FIELDS = [
     'repos',
     'starred',
     'subscriptions',
-    'watched',
     # NOTE: there are also projects, but they broke around 2025, and now requeres graphql to export?
 ]
 
@@ -47,7 +46,8 @@ class Exporter:
         self.include_repos_traffic = True if include_repos_traffic is None else include_repos_traffic
 
     def export_json(self) -> Json:
-        login = self.api.get_user().login
+        authenticated_user = self.api.get_user()
+        login = authenticated_user.login
         user = self.api.get_user(login)  # need to get NamedUser first
 
         ## check that ghexport handles all avaiable data
@@ -61,6 +61,8 @@ class Exporter:
                 'get_keys',  # these are public keys, but still not convinced it shoud be included..
                 'get_public_events',  # subset of events
                 'get_public_received_events',  # subset of received_events
+                # Legacy alias for starred repositories.
+                'get_watched',
             ]:
                 continue
             field = method[len('get_') :]
@@ -79,7 +81,12 @@ class Exporter:
                 args = {}
                 if f == 'projects':
                     args = {'state': 'all'}
-                objects = getattr(user, f'get_{f}')(**args)
+                if f == 'subscriptions':
+                    # GitHub deprecated /users/{username}/subscriptions.
+                    # The authenticated /user/subscriptions endpoint still provides this data.
+                    objects = authenticated_user.get_subscriptions()
+                else:
+                    objects = getattr(user, f'get_{f}')(**args)
                 res = [o._rawData for o in objects]
                 if f == 'repos' and self.include_repos_traffic:
                     # populate repo with traffic data

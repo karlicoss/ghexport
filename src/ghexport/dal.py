@@ -27,6 +27,7 @@ def _process_path(path: Path) -> list[Json]:
     return sorted(items, key=lambda e: e['id'])
 
 
+# TODO expose subscriptions, falling back to watched for old exports.
 # todo move DAL bits from hpi?
 class DAL:
     """
