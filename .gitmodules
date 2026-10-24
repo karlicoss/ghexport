@@ -1,3 +1,0 @@
-[submodule "src/ghexport/exporthelpers"]
-	path = src/ghexport/exporthelpers
-	url = https://github.com/karlicoss/exporthelpers.git

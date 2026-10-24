@@ -5,11 +5,12 @@ import json
 import warnings
 
 import github
-from github.GithubException import BadCredentialsException
-from github.Repository import Repository
 
 # github.enable_console_debug_logging()
-from .exporthelpers.export_helper import Json, Parser
+import hpikit.cli.export as cli
+from github.GithubException import BadCredentialsException
+from github.Repository import Repository
+from hpikit.json import Json
 
 _ALL_FIELDS = [
     'profile',
@@ -142,8 +143,7 @@ def main() -> None:
     parser = make_parser()
     args = parser.parse_args()
 
-    params = args.params
-    dumper = args.dumper
+    params = cli.get_params(parser, args)
 
     j = get_json(
         token=params['token'],
@@ -151,12 +151,12 @@ def main() -> None:
         include_repos_traffic=args.include_repos_traffic,
     )
     js = json.dumps(j, ensure_ascii=False, indent=1)
-    dumper(js)
+    cli.dump(js, path=args.path)
 
 
 def make_parser() -> argparse.ArgumentParser:
-    parser = Parser(
-        '''
+    parser = cli.make_parser(
+        description='''
 Export your Github personal data: issues, PRs, comments, followers and followings, etc.
 
 **Note**: this only deals with metadata.

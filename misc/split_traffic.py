@@ -10,7 +10,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-import kompress  # ty: ignore[unresolved-import]
+import kompress
 
 
 def main() -> None:

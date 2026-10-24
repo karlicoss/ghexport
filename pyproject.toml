@@ -3,6 +3,8 @@
 dynamic = ["version"]  # version is managed by build backend
 name = "ghexport"
 dependencies = [
+    "hpikit",
+    "kloggy",
     "ghexport[export,dal]",  # TODO backwards compatibility -- remove later?
 ]
 requires-python = ">=3.12"
@@ -20,12 +22,11 @@ Homepage = "https://github.com/karlicoss/ghexport"
 
 
 [project.optional-dependencies]
-dal = ["more-itertools"]
+dal = ["koncurrent"]
 export = ["PyGithub"]
 optional = [
-    "orjson",  # faster json processing
-    "colorlog",
-    "ijson",  # faster iterative json processing
+    "hpikit[optional]", # faster JSON parsing and transparent compression
+    "kloggy[enlighten]",  # progress bars, shown when KLOGGY_PROGRESS is set, e.g. KLOGGY_PROGRESS=enlighten
 ]
 
 [dependency-groups]
